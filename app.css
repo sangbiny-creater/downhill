@@ -1,0 +1,103 @@
+/* 다운힐 앱 화면 (인트로 · 로그인 · 캐릭터 고르기 · 시작 상자 · 결과 · 자랑하기 · 광고 자리) */
+@font-face { font-family: Jua; src: url(lib/fonts/jua.woff2?v=202611202020) format('woff2'); font-display: block; }
+:root { --ad-h: 60px; --pink: #FF6F9E; --blue: #3C8EE6; }
+html, body { background: #DDEFFC; }
+
+/* 앱 칸: 폰은 화면 전체, 큰 화면(PC·태블릿 가로)은 가운데 세로 칸 */
+#app { position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100vw, calc(100vh * .75)); overflow: hidden; background: #BFE3FA; box-shadow: 0 0 40px rgba(24,59,91,.2); }
+
+/* 맨 위 광고 자리 */
+#adBar { position: absolute; left: 0; right: 0; top: 0; height: calc(var(--ad-h) + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top); background: #F4F7FA; border-bottom: 1px solid #D5DEE7; display: flex; align-items: center; justify-content: center; z-index: 5; }
+.ad-slot { width: 320px; max-width: calc(100% - 16px); height: 50px; border: 2px dashed #B8C6D4; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #8A9AAB; font-size: 15px; letter-spacing: 1px; }
+#stage { position: absolute; left: 0; right: 0; top: calc(var(--ad-h) + env(safe-area-inset-top)); bottom: 0; overflow: hidden; }
+#stage #root { box-shadow: none; }
+
+/* 인트로·로그인·고르기 (화면 전체) */
+.scr { position: absolute; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom)); overflow: auto; }
+.scr.bg { background: #EAF6FF url(assets/app/bg.webp?v=202611202020) center bottom / cover no-repeat; }
+#intro { padding: 0; background: #CFE8F8; cursor: pointer; }
+#intro img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+.intro-tap { position: absolute; left: 50%; bottom: calc(26px + env(safe-area-inset-bottom)); transform: translateX(-50%); padding: 6px 18px; border-radius: 18px; background: rgba(24,40,62,.55); color: #fff; font-size: 17px; white-space: nowrap; animation: blink 1.4s infinite alternate; }
+@keyframes blink { from { opacity: .35; } to { opacity: 1; } }
+.scr-logo { width: 280px; max-width: 72%; filter: drop-shadow(0 4px 6px rgba(24,59,91,.3)); }
+
+/* 창: 트윈 게임랜드 팝업 그림 그대로 (lib/ui/popup = common/ui/popup/v4 복사본 — 창 틀·리본·버튼·X)
+   은유(여자) = 분홍, 은결(남자) = 파랑 (html[data-who]). 크기 숫자는 common/popup.css 와 같음 (게임 화면 폭 540 기준 창 440)
+   화면 전체 창(로그인·약관·이름)은 같은 크기로 만들고 화면 폭에 맞춰 zoom(--z, app.js) */
+:root { --who: #E8457F; --who-d: #B92C62; --who-bg: #FFF1F6; --z: 1; }
+html[data-who=eungyeol] { --who: #2C84DC; --who-d: #1F62AE; --who-bg: #EEF6FF; }
+.sq { position: relative; box-sizing: border-box; width: 440px; max-width: none; padding: 22px 26px 24px; display: flex; flex-direction: column; align-items: stretch; gap: 10px; text-align: center; color: #5A3B22;
+  border: 0 solid transparent; border-image: url(lib/ui/popup/panel_pink.webp?v=202611202020) 130 fill / calc(130px * .7333) stretch; filter: drop-shadow(0 10px 22px rgba(0,0,0,.35)); }
+html[data-who=eungyeol] .sq { border-image-source: url(lib/ui/popup/panel_blue.webp?v=202611202020); }
+.scr .sq { zoom: var(--z); }
+.sq > .sq-title:first-child, .sq > .sq-x + .sq-title { margin-top: -78px; }
+.scr .sq:has(> .sq-title) { margin-top: 60px; }
+/* 제목 리본 */
+.sq-title { display: flex; align-items: center; justify-content: center; box-sizing: border-box; flex: none; width: 350px; max-width: 100%; aspect-ratio: 680 / 254; margin: 0 auto -2px; padding: calc(41px + .08em) 57px 42px;
+  background: url(lib/ui/popup/ribbon_pink.webp?v=202611202020) center / 100% 100% no-repeat; color: #fff; font-size: 26px; line-height: 1; text-shadow: 0 2px 0 var(--who-d), 0 0 3px var(--who-d); white-space: nowrap; overflow: hidden; }
+html[data-who=eungyeol] .sq-title { background-image: url(lib/ui/popup/ribbon_blue.webp?v=202611202020); }
+.sq-logo { width: 300px; max-width: 100%; margin: 0 auto -4px; }
+.sq-best { font-size: 22px; color: #5A3B22; }
+.sq-best b { font-weight: normal; color: var(--who); }
+.sq-friend { font-size: 18px; color: var(--who-d); background: var(--who-bg); border-radius: 12px; padding: 7px 10px; line-height: 1.35; }
+.sq-p { margin: 0; font-size: 17px; line-height: 1.5; color: #6B4A3A; white-space: pre-line; word-break: keep-all; }
+/* 버튼: 흰 버튼(테두리) · 큰 버튼은 채운 버튼 (높이 64 = 아래 버튼 58의 1.1배) */
+.sq-btn { display: flex; align-items: center; justify-content: center; gap: 10px; box-sizing: border-box; height: 58px; padding: .08em 29px 0; font-family: var(--font); font-size: 22px; line-height: 1; white-space: nowrap; overflow: hidden; text-decoration: none; background: none; border-radius: 0;
+  border: 0 solid transparent; border-image: url(lib/ui/popup/btn_pink.webp?v=202611202020) 0 58 fill / 0 29px stretch; color: var(--who); }
+html[data-who=eungyeol] .sq-btn { border-image-source: url(lib/ui/popup/btn_blue.webp?v=202611202020); }
+.sq-btn.main, .sq-btn.ad { height: 64px; padding: .08em 32px 0; font-size: 24px; border-image-source: url(lib/ui/popup/fill_pink.webp?v=202611202020); border-image-width: 0 32px; color: #fff; text-shadow: 0 2px 0 var(--who-d); }
+html[data-who=eungyeol] .sq-btn.main, html[data-who=eungyeol] .sq-btn.ad { border-image-source: url(lib/ui/popup/fill_blue.webp?v=202611202020); }
+.sq-btn.google, html[data-who=eungyeol] .sq-btn.google { height: 64px; border: 2px solid #DADCE0; border-image: none; border-radius: 32px; background: #fff; color: #3C4043; box-shadow: 0 3px 0 #D5D9DE; }
+.sq-btn.google svg { width: 26px; height: 26px; flex: none; }
+.sq-btn:disabled { opacity: .5; }
+.sq-row { display: flex; gap: 12px; }
+.sq-row .sq-btn { flex: 1 1 0; min-width: 0; }
+.sq-links { display: flex; justify-content: center; align-items: center; gap: 8px; color: #C4A994; font-size: 17px; }
+.sq-links button { font-size: 17px; color: #7A5A44; text-decoration: underline; padding: 4px 2px; }
+.sq-terms { margin: 0; font-size: 13px; line-height: 1.5; color: #9A8070; word-break: keep-all; }
+.sq-in { height: 54px; border-radius: 16px; border: 2px solid #EBD9C8; padding: 0 14px; font-size: 20px; font-family: var(--font); color: #5A3B22; background: #fff; text-align: center; -webkit-appearance: none; appearance: none; }
+.sq-in:focus { outline: none; border-color: var(--who); }
+.sq-err { margin: -2px 0 0; min-height: 18px; font-size: 14px; line-height: 1.4; color: #E0457B; }
+/* 오른쪽 위 X (닫기) */
+.sq-x { position: absolute; right: -4px; top: -6px; z-index: 3; width: 46px; height: 46px; background: url(lib/ui/popup/x_pink.webp?v=202611202020) center / contain no-repeat; filter: drop-shadow(0 2px 3px rgba(0,0,0,.25)); }
+html[data-who=eungyeol] .sq-x { background-image: url(lib/ui/popup/x_blue.webp?v=202611202020); }
+.sq.res .res-table { width: 100%; box-shadow: inset 0 0 0 2px #F0DCCB; }
+/* 약관 체크 칸 */
+.ck-list { display: flex; flex-direction: column; gap: 4px; padding: 0 4px; }
+.ck { display: flex; align-items: center; gap: 10px; min-height: 46px; text-align: left; font-size: 17px; line-height: 1.3; color: #5A3B22; cursor: pointer; }
+.ck input { position: absolute; opacity: 0; pointer-events: none; }
+.ck i { flex: none; width: 26px; height: 26px; border-radius: 8px; border: 2px solid #E3CBB6; background: #fff; box-sizing: border-box; }
+.ck input:checked + i { background: var(--who) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat; border-color: var(--who); }
+.ck span { flex: 1; min-width: 0; }
+.ck b { font-weight: normal; color: var(--who); }
+.ck.plain { cursor: default; padding-left: 36px; color: #7A5A44; }
+.ck-more { flex: none; font-family: var(--font); font-size: 15px; color: #8A6E58; text-decoration: underline; padding: 6px 2px; }
+.ck-detail { margin: -4px 0 4px 36px; padding: 8px 10px; border-radius: 12px; background: #FFF8F1; font-size: 13px; line-height: 1.5; color: #7A5A44; text-align: left; white-space: pre-line; }
+
+/* 캐릭터 고르기 */
+.sel-title { font-size: 34px; color: #fff; text-shadow: 0 3px 0 #2E6EA8, 0 0 8px rgba(24,59,91,.4); }
+.sel-chars { display: flex; gap: 14px; width: 100%; max-width: 420px; }
+/* 캐릭터 카드: 팝업 창 틀 그림 (여자 = 분홍, 남자 = 파랑) */
+.sel-char { flex: 1 1 0; min-width: 0; padding: 26px 10px 22px; display: flex; flex-direction: column; align-items: center; border: 0 solid transparent; border-image: url(lib/ui/popup/panel_pink.webp?v=202611202020) 130 fill / 54px stretch; filter: drop-shadow(0 6px 12px rgba(24,59,91,.3)); transition: transform .15s; }
+.sel-char[data-char="eungyeol"] { border-image-source: url(lib/ui/popup/panel_blue.webp?v=202611202020); }
+.sel-char img { width: 100%; height: min(42vh, 300px); object-fit: contain; }
+.sel-char.on { transform: scale(1.06); }
+.sel-chars, .sel-title { zoom: max(1, var(--z)); }
+#shareText { overflow-wrap: anywhere; font-size: 16px; }
+
+/* 가짜 광고 · 알림 */
+#adFake { z-index: 30; background: rgba(10,20,35,.92); }
+.ad-fake { display: flex; flex-direction: column; align-items: center; gap: 10px; color: #fff; }
+.ad-fake b { font-weight: normal; font-size: 26px; }
+.ad-fake span { font-size: 64px; }
+.ad-fake small { font-size: 15px; opacity: .7; }
+.toast { position: absolute; left: 50%; bottom: calc(40px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 40; max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 16px; background: rgba(24,40,62,.92); color: #fff; font-size: 16px; text-align: center; white-space: pre-line; }
+
+/* 가로 화면: 지원하지 않음 (폰·태블릿) */
+#rotate { display: none; position: fixed; inset: 0; z-index: 100; background: linear-gradient(#9CD3F5, #EAF6FF); color: #2B5C8A; font-size: 26px; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+.rot-phone { width: 46px; height: 80px; border: 5px solid #2B5C8A; border-radius: 10px; animation: rot 1.8s ease-in-out infinite; }
+@keyframes rot { 0%, 25% { transform: rotate(-90deg); } 60%, 100% { transform: rotate(0); } }
+@media (orientation: landscape) and (pointer: coarse) {
+  #rotate { display: flex; }
+  #app { visibility: hidden; }
+}
